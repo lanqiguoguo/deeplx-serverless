@@ -76,9 +76,18 @@ async function warmCookies() {
 }
 
 async function translate(text, sourceLang = 'AUTO', targetLang = 'ZH') {
-  if (!text || text.length === 0) throw new Error('No text to translate');
-  if (text.length > MAX_FREE_TEXT_LENGTH) {
-    throw new Error('text exceeds maximum length: ' + text.length + ' characters (limit is ' + MAX_FREE_TEXT_LENGTH + ')');
+  // Accept a single string or an array of strings (DeepLX-style batch).
+  const isArray = Array.isArray(text);
+  const items = isArray ? text : [text];
+  if (items.length === 0) throw new Error('No text to translate');
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (typeof item !== 'string' || item.length === 0) {
+      throw new Error('text must be a non-empty string' + (isArray ? ' (array items must be strings)' : ''));
+    }
+    if (item.length > MAX_FREE_TEXT_LENGTH) {
+      throw new Error('text exceeds maximum length: ' + item.length + ' characters (limit is ' + MAX_FREE_TEXT_LENGTH + ')');
+    }
   }
 
   const resolvedTarget = resolveTargetLang(targetLang);
@@ -87,7 +96,7 @@ async function translate(text, sourceLang = 'AUTO', targetLang = 'ZH') {
   await warmCookies();
 
   const body = {
-    text: [text],
+    text: items,
     target_lang: resolvedTarget,
     usage_type: 'Translate',
     app_information: {
@@ -130,6 +139,17 @@ async function translate(text, sourceLang = 'AUTO', targetLang = 'ZH') {
   const translations = response.data.translations;
   if (!translations || translations.length === 0) {
     throw new Error('Translation failed: empty translations array');
+  }
+
+  if (isArray) {
+    return {
+      text: translations.map((t) => t.text || ''),
+      alternatives: translations.map((t) => t.alternatives || []),
+      source_lang: translations[0] && translations[0].detected_source_language
+        ? translations[0].detected_source_language.toUpperCase()
+        : sourceLang,
+      target_lang: targetLang,
+    };
   }
 
   const t = translations[0];
