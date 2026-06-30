@@ -1,0 +1,4 @@
+# Normalize line endings to LF in the working tree.
+# Critical on Windows: keeps scf_bootstrap as LF so the SCF Linux runtime
+# can execute it (CRLF would cause "bad interpreter" errors).
+* text=auto eol=lf

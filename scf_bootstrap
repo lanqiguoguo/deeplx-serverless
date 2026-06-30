@@ -1,2 +1,11 @@
 #!/bin/sh
-/var/lang/node16/bin/node server.js
+# Tencent SCF custom-runtime / Web Function bootstrap.
+# Pick the node binary: prefer PATH, fall back to known SCF runtime paths
+# (Node 16 / 18 / 20). Must use LF line endings.
+NODE_BIN="$(command -v node 2>/dev/null)"
+if [ -z "$NODE_BIN" ]; then
+  for p in /var/lang/node16/bin/node /var/lang/node18/bin/node /var/lang/node20/bin/node; do
+    [ -x "$p" ] && NODE_BIN="$p" && break
+  done
+fi
+exec "$NODE_BIN" server.js

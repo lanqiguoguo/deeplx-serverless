@@ -1,0 +1,13 @@
+name = "deeplx-serverless"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# The API key is read from the `API_KEY` env var (path-based auth:
+# POST https://<worker-host>/<API_KEY>/translate).
+#
+# Recommended: set it as a secret (value is never written in plaintext):
+#   wrangler secret put API_KEY
+#
+# Quick alternative — plaintext Var (dashboard: Settings → Variables):
+#   [vars]
+#   API_KEY = "changeme"

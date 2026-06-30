@@ -52,6 +52,9 @@ const warmupLock = { warming: false };
 const client = axios.create({
   timeout: 20000,
   maxRedirects: 0,
+  // Inspect HTTP status ourselves so 429 (and other non-2xx) are reported
+  // with the correct status instead of being swallowed by axios.
+  validateStatus: () => true,
   httpsAgent: new https.Agent({ keepAlive: true }),
 });
 
@@ -81,7 +84,7 @@ async function translate(text, sourceLang = 'AUTO', targetLang = 'ZH') {
   const resolvedTarget = resolveTargetLang(targetLang);
   const resolvedSource = resolveSourceLang(sourceLang);
 
-  warmCookies();
+  await warmCookies();
 
   const body = {
     text: [text],
