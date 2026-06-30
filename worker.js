@@ -54,8 +54,9 @@ function resolveTargetLang(code) {
 function resolveSourceLang(code) {
   if (!code || code.toUpperCase() === 'AUTO') return '';
   const v = sourceLangMap[code.toUpperCase()];
-  if (!v) throw new Error('unsupported source_lang "' + code + '"');
-  return v;
+  // Unknown source lang (e.g. a code DeepL doesn't support, or a client-side
+  // misdetection) -> fall back to autodetect instead of erroring.
+  return v || '';
 }
 
 // Per-isolate cookie state. Worker isolates are long-lived, so this mirrors

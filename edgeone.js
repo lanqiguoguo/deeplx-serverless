@@ -60,8 +60,9 @@ function resolveTargetLang(code) {
 function resolveSourceLang(code) {
   if (!code || code.toUpperCase() === 'AUTO') return '';
   const v = sourceLangMap[code.toUpperCase()];
-  if (!v) throw new Error('unsupported source_lang "' + code + '"');
-  return v;
+  // Unknown source lang (e.g. a code DeepL doesn't support, or a client-side
+  // misdetection) -> fall back to autodetect instead of erroring.
+  return v || '';
 }
 
 // 隔离实例级 cookie 状态(边缘 isolate 长驻,与 SCF/Workers 同理)
