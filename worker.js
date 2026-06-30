@@ -214,6 +214,7 @@ export default {
         return json({
           alternatives: result.alternatives,
           code: 200,
+          message: 'success',
           data: result.text,
           id: Math.floor(Math.random() * 10000000000),
           method: 'Free',
