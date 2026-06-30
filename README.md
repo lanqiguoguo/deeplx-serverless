@@ -131,7 +131,7 @@ curl -X POST https://<你的域名>/<API_KEY>/translate \
 ## 自托管
 
 ```bash
-git clone https://github.com/LegendLeo/deeplx-serverless
+git clone https://github.com/lanqiguoguo/deeplx-serverless
 cd deeplx-serverless
 npm install
 npm start          # Express 监听 9000 端口(或 $PORT)
